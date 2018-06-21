@@ -80,13 +80,14 @@ window.countNRooksSolutions = function(n) {
 window.findNQueensSolution = function(n) {
   var solution = new Board({n: n});
   var tempCol = 0;
+
   if (n === 1) {
     solution.togglePiece(0, 0);
     return solution.rows();
   }
   
   if (n === 2 || n === 3) {
-    return new Board({ n: n});
+    return new Board({ n: n}).rows();
   }
 
   var recurseRow = function(row) {
@@ -98,14 +99,15 @@ window.findNQueensSolution = function(n) {
       solution.togglePiece(row, x);
       if (solution.hasAnyQueensConflicts() === false) {
         tempCol = 0;
-        recurseRow(row + 1);
+        return recurseRow(row + 1);
         solution.togglePiece(row, x);
       } else {
         solution.togglePiece(row, x);
       }
     }
-    tempCol = indexOf(solution.get()[row - 1]);
-
+    tempCol = solution.get(row - 1).indexOf(1) + 1;
+    solution.togglePiece(row - 1, tempCol - 1);
+    recurseRow(row - 1);
   };
 
   recurseRow(0);
