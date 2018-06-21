@@ -79,14 +79,49 @@ window.countNRooksSolutions = function(n) {
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution = new Board({n: n});
-
-  if (n < 4) {
-    return 0;
+  var tempCol = 0;
+  if (n === 1) {
+    solution.togglePiece(0, 0);
+    return solution.rows();
+  }
+  
+  if (n === 2 || n === 3) {
+    return new Board({ n: n});
   }
 
   var recurseRow = function(row) {
-
     if (row === n) {
+      return solution.rows();
+    }
+
+    for (var x = tempCol; x < n; x++) {
+      solution.togglePiece(row, x);
+      if (solution.hasAnyQueensConflicts() === false) {
+        tempCol = 0;
+        recurseRow(row + 1);
+        solution.togglePiece(row, x);
+      } else {
+        solution.togglePiece(row, x);
+      }
+    }
+    tempCol = indexOf(solution.get()[row - 1]);
+
+  };
+
+  recurseRow(0);
+
+  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  return solution.rows();
+};
+
+// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+window.countNQueensSolutions = function(n) {
+  var solutionCount = 0;
+  var solution = new Board({n: n});
+  
+  var recurseRow = function(row) {
+    if (row === n) {
+      solutionCount++;
       return;
     }
 
@@ -95,7 +130,7 @@ window.findNQueensSolution = function(n) {
       if (solution.hasAnyQueensConflicts() === false) {
         recurseRow(row + 1);
         //undo the last togglePiece
-        // solution.togglePiece(row, x);
+        solution.togglePiece(row, x);
       } else {
         solution.togglePiece(row, x);
       }
@@ -103,15 +138,6 @@ window.findNQueensSolution = function(n) {
   };
 
   recurseRow(0);
-
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
-};
-
-// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
