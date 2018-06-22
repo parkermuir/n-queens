@@ -20,6 +20,7 @@ window.findNRooksSolution = function(n) {
   // togglePiece(rowI, colI);
   // let length = board.rows().length; // n
 
+  
   //inst a new board
   var solution = new Board({n: n});
 
